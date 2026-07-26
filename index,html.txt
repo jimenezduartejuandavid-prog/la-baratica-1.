@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rifa La Baratica No. 1</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #1a1a1a;
+      color: #fff;
+      margin: 0;
+      padding: 15px;
+      text-align: center;
+    }
+    .card {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #262626;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      border: 1px solid #333;
+    }
+    h1 {
+      color: #ffcc00;
+      margin: 0 0 5px 0;
+      font-size: 24px;
+      text-transform: uppercase;
+    }
+    .subtitle {
+      color: #aaa;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+    .info-box {
+      background: #333;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .info-box strong {
+      color: #25D366;
+    }
+    .numbers-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 15px;
+    }
+    @media (min-width: 400px) {
+      .numbers-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .num-btn {
+      padding: 14px 8px;
+      font-size: 18px;
+      font-weight: bold;
+      background-color: #25D366;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    .num-btn:hover {
+      background-color: #1ebc57;
+      transform: translateY(-2px);
+    }
+    .num-btn.taken {
+      visibility: hidden;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>🎟️ Rifa La Baratica No. 1</h1>
+    <div class="subtitle">La hija de la Solución</div>
+
+    <div class="info-box">
+      💵 <strong>Valor: $20.000</strong><br>
+      Toca un número disponible para apartarlo por WhatsApp.
+    </div>
+
+    <div class="numbers-grid" id="grid"></div>
+  </div>
+
+  <script>
+    // ⚙️ Número de WhatsApp asignado (Damiánis Aragón Andrade)
+    const PHONE_NUMBER = "573142571260"; 
+
+    // Lista exacta de los 27 números visibles en la boleta
+    const raffleNumbers = [
+      "1326", "8612", "3612",
+      "1979", "0717", "4858", "5034",
+      "4860", "0054", "3622", "2481", "9812",
+      "1228", "7204", "6294", "5042", "9385",
+      "4867", "0072", "3617", "2480", "9816",
+      "1644", "7216", "6291", "8398", "5045"
+    ];
+
+    const grid = document.getElementById('grid');
+
+    // Cargar números ya apartados de la memoria
+    let takenNumbers = JSON.parse(localStorage.getItem('takenNumbers_baratica')) || [];
+
+    raffleNumbers.forEach(numStr => {
+      const btn = document.createElement('button');
+      btn.className = 'num-btn';
+      btn.textContent = numStr;
+
+      if (takenNumbers.includes(numStr)) {
+        btn.classList.add('taken');
+      }
+
+      btn.addEventListener('click', () => {
+        const confirmChoice = confirm(`¿Quieres apartar el número ${numStr}?`);
+        if (confirmChoice) {
+          // Ocultar número
+          btn.classList.add('taken');
+          takenNumbers.push(numStr);
+          localStorage.setItem('takenNumbers_baratica', JSON.stringify(takenNumbers));
+
+          // Enviar WhatsApp a Damiánis
+          const message = encodeURIComponent(`¡Hola! Quiero apartar el número *${numStr}* para la Rifa La Baratica No. 1 ($20.000) 🎟️.`);
+          const whatsappUrl = `https://wa.me/${PHONE_NUMBER}?text=${message}`;
+          
+          window.open(whatsappUrl, '_blank');
+        }
+      });
+
+      grid.appendChild(btn);
+    });
+  </script>
+</body>
+</html>
